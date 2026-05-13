@@ -1,149 +1,1004 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AdStudio SDK — QA Test</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TECHPULSE — Mobile · Laptops · Gaming</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --accent: #e8ff47;
+    --accent2: #ff4757;
+    --accent3: #00d2ff;
+    --text: #f0f0f0;
+    --muted: #6b6b80;
+    --border: #222230;
+  }
 
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0;
-            padding: 40px 24px;
-            background: #f9fafb;
-            color: #111827;
-            line-height: 1.5;
-        }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        main {
-            max-width: 720px;
-            margin: 0 auto;
-        }
+  html { scroll-behavior: smooth; }
 
-        h1 {
-            font-size: 28px;
-            margin: 0 0 8px;
-        }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-        p.lede {
-            color: #6b7280;
-            margin: 0 0 32px;
-        }
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
 
-        section {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 20px 24px;
-            margin-bottom: 16px;
-        }
+  /* ── HEADER ── */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.9);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+  }
 
-        section h2 {
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #6b7280;
-            margin: 0 0 12px;
-        }
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
 
-        code {
-            background: #f3f4f6;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 13px;
-        }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .logo span { color: var(--accent); }
 
-        ul {
-            margin: 0;
-            padding-left: 20px;
-        }
-    </style>
+  nav { display: flex; gap: 2rem; align-items: center; }
+  nav a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  nav a:hover, nav a.active { color: var(--accent); }
+
+  .nav-cta {
+    background: var(--accent);
+    color: #000 !important;
+    padding: 0.45rem 1rem;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+  .nav-cta:hover { background: #d4ea30 !important; }
+
+  /* ── HERO ── */
+  .hero {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 4rem 2rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-featured {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface);
+    cursor: pointer;
+    group: true;
+  }
+  .hero-featured::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 40%, transparent 70%);
+    z-index: 1;
+  }
+  .hero-img {
+    width: 100%;
+    height: 520px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease;
+  }
+  .hero-featured:hover .hero-img { transform: scale(1.04); }
+
+  .hero-featured-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2rem;
+    z-index: 2;
+  }
+  .tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 0.25rem 0.6rem;
+    border-radius: 2px;
+    margin-bottom: 0.75rem;
+  }
+  .tag-mobile { background: var(--accent); color: #000; }
+  .tag-laptop { background: var(--accent3); color: #000; }
+  .tag-gaming { background: var(--accent2); color: #fff; }
+  .tag-review { background: #9b59b6; color: #fff; }
+  .tag-news { background: #2ecc71; color: #000; }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.15;
+    color: #fff;
+    margin-bottom: 0.75rem;
+  }
+  .hero-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .hero-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .hero-side-card {
+    flex: 1;
+    background: var(--surface);
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-left: 3px solid transparent;
+  }
+  .hero-side-card:hover { background: var(--surface2); border-left-color: var(--accent); }
+
+  .side-card-img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border-radius: 2px;
+  }
+  .side-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+  .side-excerpt {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.6;
+    flex: 1;
+  }
+  .side-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 1rem;
+  }
+
+  /* ── TICKER ── */
+  .ticker-wrap {
+    background: var(--accent);
+    color: #000;
+    overflow: hidden;
+    padding: 0.5rem 0;
+    white-space: nowrap;
+  }
+  .ticker-track {
+    display: inline-flex;
+    animation: ticker 30s linear infinite;
+  }
+  .ticker-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0 3rem;
+    font-weight: 500;
+  }
+  .ticker-sep { opacity: 0.4; }
+  @keyframes ticker { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+
+  /* ── MAIN LAYOUT ── */
+  .main-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 3rem;
+  }
+
+  /* ── SECTION HEADING ── */
+  .section-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-heading h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+  }
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  /* ── CATEGORY FILTER ── */
+  .filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+  .filter-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+  }
+
+  /* ── ARTICLE GRID ── */
+  .articles-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .article-card {
+    background: var(--surface);
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    animation: fadeUp 0.5s ease both;
+    border: 1px solid var(--border);
+  }
+  .article-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  }
+  .article-card.wide { grid-column: 1 / -1; display: grid; grid-template-columns: 300px 1fr; }
+
+  .card-img-wrap { overflow: hidden; position: relative; }
+  .card-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+  .article-card.wide .card-img { height: 100%; min-height: 200px; }
+  .article-card:hover .card-img { transform: scale(1.05); }
+
+  .card-body { padding: 1.25rem; display: flex; flex-direction: column; }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0.5rem 0;
+    color: var(--text);
+  }
+  .article-card.wide .card-title { font-size: 1.4rem; }
+  .card-excerpt {
+    font-size: 0.83rem;
+    color: var(--muted);
+    line-height: 1.7;
+    flex: 1;
+    margin-bottom: 1rem;
+  }
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-top: 1px solid var(--border);
+    padding-top: 0.75rem;
+    margin-top: auto;
+  }
+  .read-time { display: flex; align-items: center; gap: 0.3rem; }
+
+  /* Rating stars */
+  .stars { color: var(--accent); font-size: 0.7rem; letter-spacing: 1px; }
+
+  /* ── SIDEBAR ── */
+  .sidebar { display: flex; flex-direction: column; gap: 2rem; }
+
+  .sidebar-widget {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+  }
+  .widget-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Trending list */
+  .trending-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .trending-item:last-child { border-bottom: none; }
+  .trend-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--border);
+    line-height: 1;
+    flex-shrink: 0;
+    width: 2rem;
+  }
+  .trending-item:hover .trend-num { color: var(--accent); }
+  .trend-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.4;
+    margin-bottom: 0.3rem;
+  }
+  .trend-cat {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+
+  /* Newsletter */
+  .newsletter-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+  .nl-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.65rem 0.9rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    border-radius: 2px;
+    margin-bottom: 0.5rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .nl-input:focus { border-color: var(--accent); }
+  .nl-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 0.7rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.2s;
+  }
+  .nl-btn:hover { background: #d4ea30; }
+
+  /* Deal widget */
+  .deal-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .deal-card:hover { border-color: var(--accent); }
+  .deal-card:last-child { margin-bottom: 0; }
+  .deal-name { font-size: 0.85rem; font-weight: 500; margin-bottom: 0.25rem; }
+  .deal-prices { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.4rem; }
+  .deal-old { font-size: 0.75rem; color: var(--muted); text-decoration: line-through; }
+  .deal-new { font-size: 1rem; font-weight: 700; color: var(--accent); font-family: 'DM Mono', monospace; }
+  .deal-save {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    background: var(--accent2);
+    color: #fff;
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+  }
+
+  /* ── CATEGORIES SECTION ── */
+  .categories-section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem 3rem;
+  }
+
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+  .cat-block {
+    background: var(--surface);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .cat-block::before {
+    content: attr(data-emoji);
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 5rem;
+    opacity: 0.07;
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .cat-block:hover { background: var(--surface2); }
+  .cat-block:hover::before { opacity: 0.15; transform: translateY(-50%) scale(1.1); }
+  .cat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .cat-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+  }
+  .cat-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+  .cat-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 0;
+    transition: width 0.4s ease;
+  }
+  .cat-block:hover .cat-bar { width: 100%; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem 2rem;
+  }
+  .footer-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem;
+    margin-bottom: 2rem;
+  }
+  .footer-brand .logo { font-size: 1.3rem; }
+  .footer-desc {
+    font-size: 0.83rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-top: 1rem;
+  }
+  .footer-col h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .footer-col a {
+    display: block;
+    font-size: 0.83rem;
+    color: var(--muted);
+    text-decoration: none;
+    margin-bottom: 0.5rem;
+    transition: color 0.2s;
+  }
+  .footer-col a:hover { color: var(--text); }
+  .footer-bottom {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .article-card { animation-delay: calc(var(--i) * 0.08s); }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal { opacity: 0; transform: translateY(30px); transition: all 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .main-wrapper { grid-template-columns: 1fr; }
+    .articles-grid { grid-template-columns: 1fr; }
+    .article-card.wide { grid-template-columns: 1fr; }
+    .cat-grid { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr 1fr; }
+    nav a:not(.nav-cta) { display: none; }
+  }
+</style>
 </head>
-
 <body>
 
-<main>
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">TECH<span>PULSE</span></a>
+    <nav>
+      <a href="#" class="active">Home</a>
+      <a href="#mobile">Mobile</a>
+      <a href="#laptops">Laptops</a>
+      <a href="#gaming">Gaming</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#" class="nav-cta">Subscribe</a>
+    </nav>
+  </div>
+</header>
 
-    <h1>AdPlacement</h1>
-
-<!-- Revive Adserver Asynchronous JS Tag - Generated with Revive Adserver v5.4.1 -->
-<ins data-revive-zoneid="4" data-revive-id="1a4f77d471a3fd979889b9ceb8234d08"></ins>
+    <ins data-revive-zoneid="4" data-revive-id="1a4f77d471a3fd979889b9ceb8234d08"></ins>
 <script async src="//dw5p3whfqbm0d.cloudfront.net/revive/www/delivery/asyncjs.php"></script>
 
-    <h1>AdStudio SDK — QA Test</h1>
+<!-- HERO -->
+<section class="hero">
+  <!-- Featured -->
+  <div class="hero-featured">
+    <img class="hero-img" src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=900&q=80" alt="Latest smartphones" loading="lazy">
+    <div class="hero-featured-content">
+      <span class="tag tag-mobile">Mobile</span>
+      <h1 class="hero-title">Galaxy S25 Ultra vs iPhone 16 Pro Max: The Ultimate 2025 Camera Showdown</h1>
+      <div class="hero-meta">By Marcus Chen &nbsp;·&nbsp; May 12, 2025 &nbsp;·&nbsp; 8 min read</div>
+    </div>
+  </div>
 
-    <p class="lede">
-        This page loads the AdStudio SDK from S3. The chat bubble should appear in the bottom-right corner after the configured init delay.
-    </p>
+  <!-- Sidebar cards -->
+  <div class="hero-sidebar">
+    <div class="hero-side-card">
+      <img class="side-card-img" src="https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=600&q=80" alt="Laptop" loading="lazy">
+      <div>
+        <span class="tag tag-laptop">Laptops</span>
+        <div class="side-title">Apple MacBook Pro M4 Max Breaks Every Benchmark We Threw At It</div>
+        <div class="side-excerpt">Cupertino's latest silicone beast rewrites the rulebook for professional portable computing once more.</div>
+      </div>
+      <div class="side-meta">Apr 28, 2025 · 6 min read</div>
+    </div>
+    <div class="hero-side-card">
+      <img class="side-card-img" src="https://images.unsplash.com/photo-1593118247619-e2d6f056869e?w=600&q=80" alt="Gaming" loading="lazy">
+      <div>
+        <span class="tag tag-gaming">Gaming</span>
+        <div class="side-title">PS6 Pro Confirmed: Sony Drops Official Specs Ahead of Holiday Launch</div>
+        <div class="side-excerpt">8K native output, 240fps gaming mode, and a redesigned DualSense controller with haptic muscle memory.</div>
+      </div>
+      <div class="side-meta">May 1, 2025 · 5 min read</div>
+    </div>
+  </div>
+</section>
 
-    <section>
-        <h2>SDK config</h2>
-        <ul>
-            <li><strong>SDK bundle:</strong> <code>adstudio-sdk.umd.js</code></li>
-            <li><strong>baseUrl:</strong> ALB dev endpoint</li>
-            <li><strong>bucketUrl:</strong> S3 bucket root</li>
-            <li><strong>bridgeUrl:</strong> adid bridge</li>
-        </ul>
-    </section>
+<!-- NEWS TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <span class="ticker-item">📱 OnePlus 14 Pro lands with 150W charging</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">💻 Dell XPS 15 2025 review: near-perfect</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">🎮 Xbox Series X2 concept leaked online</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">📱 Google Pixel 10 camera details surface</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">💻 ASUS ROG Zephyrus now with RTX 5090</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">🎮 Steam hit 50 million concurrent users</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">📱 OnePlus 14 Pro lands with 150W charging</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">💻 Dell XPS 15 2025 review: near-perfect</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">🎮 Xbox Series X2 concept leaked online</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">📱 Google Pixel 10 camera details surface</span>
+    <span class="ticker-item ticker-sep">·</span>
+  </div>
+</div>
 
-    <section>
-        <h2>What to verify</h2>
-        <ul>
-            <li>Bubble appears in bottom-right after ~5s</li>
-            <li>Modal opens without <code>null</code> URL</li>
-            <li>API calls go to ALB (not S3)</li>
-            <li>Navigation works inside modal</li>
-        </ul>
-    </section>
-
-    <!-- AdId Testing Panel -->
-    <div id="adid-test-panel" style="
-        position: fixed;
-        bottom: 80px;
-        left: 16px;
-        z-index: 9999;
-        background: #1a1a2e;
-        color: #eee;
-        border-radius: 12px;
-        padding: 16px 20px;
-        font-family: monospace;
-        font-size: 13px;
-        box-shadow: 0 4px 24px rgba(0,0,0,0.3);
-        min-width: 320px;
-    ">
-        <div style="margin-bottom: 10px;">
-            <label style="color: #aaa; font-size: 11px; text-transform: uppercase;">
-                Current AdId
-            </label>
-
-            <div id="adid-display" style="
-                background: #0d0d1a;
-                padding: 8px 10px;
-                border-radius: 6px;
-                margin-top: 4px;
-                word-break: break-all;
-                color: #43e97b;
-                min-height: 20px;
-            ">—</div>
-        </div>
-
-        <button onclick="refreshAdId()" style="
-            width: 100%;
-            padding: 6px;
-            border-radius: 6px;
-            border: 1px solid #333;
-            background: #0d0d1a;
-            color: #4facfe;
-            cursor: pointer;
-        ">
-            Refresh
-        </button>
+<!-- MAIN CONTENT -->
+<div class="main-wrapper">
+  <main>
+    <div class="section-heading reveal">
+      <span class="section-num">01 — Latest Stories</span>
+      <h2>Fresh From the Lab</h2>
     </div>
 
-</main>
+    <!-- Category Filters -->
+    <div class="filters reveal">
+      <button class="filter-btn active" onclick="filterArticles('all', this)">All</button>
+      <button class="filter-btn" onclick="filterArticles('mobile', this)">📱 Mobile</button>
+      <button class="filter-btn" onclick="filterArticles('laptop', this)">💻 Laptops</button>
+      <button class="filter-btn" onclick="filterArticles('gaming', this)">🎮 Gaming</button>
+      <button class="filter-btn" onclick="filterArticles('review', this)">⭐ Reviews</button>
+    </div>
 
-<script src="https://adstudio-sdk-qa-996209450149.s3.ap-southeast-1.amazonaws.com/sdk/adstudio-sdk.umd.js"
+    <!-- Articles -->
+    <div class="articles-grid" id="articlesGrid">
+
+      <div class="article-card wide" data-cat="mobile" style="--i:1">
+        <div class="card-img-wrap">
+          <img class="card-img" src="https://images.unsplash.com/photo-1580910051074-3eb694886505?w=800&q=80" alt="Foldable phones" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="tag tag-mobile">Mobile</span>
+          <div class="card-title">The Foldable Revolution Is Finally Here: Why 2025 Is the Year Flip Phones Go Mainstream</div>
+          <div class="card-excerpt">With Samsung, Google, and Motorola all dropping sub-$800 foldables, the technology that once felt like a novelty is now becoming a genuine alternative to the traditional slab smartphone. We tested five models over three weeks to find out who got it right.</div>
+          <div class="card-footer">
+            <span class="read-time">⏱ 10 min read</span>
+            <span>James Okoye · May 10, 2025</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="article-card" data-cat="gaming" style="--i:2">
+        <div class="card-img-wrap">
+          <img class="card-img" src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=600&q=80" alt="Gaming setup" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="tag tag-gaming">Gaming</span>
+          <div class="card-title">RTX 5090 Ti Review: The GPU That Broke Our Benchmarks</div>
+          <div class="card-excerpt">NVIDIA's new titan is absurd, spectacular, and costs more than most people's laptops. Here's whether it's worth it.</div>
+          <div class="card-footer">
+            <span class="stars">★★★★★</span>
+            <span>May 8, 2025</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="article-card" data-cat="laptop" style="--i:3">
+        <div class="card-img-wrap">
+          <img class="card-img" src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600&q=80" alt="Laptop" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="tag tag-laptop">Laptops</span>
+          <div class="card-title">Best Ultrabooks of 2025: Thin, Powerful, and Actually Affordable</div>
+          <div class="card-excerpt">Thin-and-light laptops have never been this capable. Our top picks across every budget range for work and play.</div>
+          <div class="card-footer">
+            <span class="read-time">⏱ 7 min read</span>
+            <span>May 6, 2025</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="article-card" data-cat="mobile" style="--i:4">
+        <div class="card-img-wrap">
+          <img class="card-img" src="https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=600&q=80" alt="Smartwatch" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="tag tag-mobile">Mobile</span>
+          <div class="card-title">Smartwatches That Actually Replace Your Phone for a Day</div>
+          <div class="card-excerpt">We tested five LTE smartwatches to see which ones can truly leave your phone at home. The results surprised us.</div>
+          <div class="card-footer">
+            <span class="stars">★★★★☆</span>
+            <span>May 5, 2025</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="article-card" data-cat="gaming" style="--i:5">
+        <div class="card-img-wrap">
+          <img class="card-img" src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&q=80" alt="Gaming monitor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="tag tag-gaming">Gaming</span>
+          <div class="card-title">OLED vs Mini-LED Gaming Monitors: Which Tech Wins in 2025?</div>
+          <div class="card-excerpt">The display war rages on. We put the best OLED and Mini-LED panels head-to-head in dark rooms and bright offices.</div>
+          <div class="card-footer">
+            <span class="read-time">⏱ 9 min read</span>
+            <span>May 3, 2025</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="article-card" data-cat="laptop" style="--i:6">
+        <div class="card-img-wrap">
+          <img class="card-img" src="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600&q=80" alt="Tablet" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="tag tag-laptop">Laptops</span>
+          <div class="card-title">iPad Pro M4 vs Surface Pro 11: The 2-in-1 Throne Is Up for Grabs</div>
+          <div class="card-excerpt">Apple and Microsoft are closer than ever. But only one truly earns its place as a laptop replacement in 2025.</div>
+          <div class="card-footer">
+            <span class="stars">★★★★★</span>
+            <span>Apr 30, 2025</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /articles-grid -->
+
+    <!-- Categories -->
+    <div class="section-heading reveal" style="margin-top: 3rem;">
+      <span class="section-num">02 — Explore</span>
+      <h2>Browse by Category</h2>
+    </div>
+
+    <div class="cat-grid reveal" id="mobile">
+      <div class="cat-block" data-emoji="📱">
+        <div class="cat-label">Category 01</div>
+        <div class="cat-name" style="color: var(--accent);">Mobile</div>
+        <div class="cat-count">142 articles</div>
+        <div class="cat-bar" style="background: var(--accent);"></div>
+      </div>
+      <div class="cat-block" data-emoji="💻" id="laptops">
+        <div class="cat-label">Category 02</div>
+        <div class="cat-name" style="color: var(--accent3);">Laptops</div>
+        <div class="cat-count">98 articles</div>
+        <div class="cat-bar" style="background: var(--accent3);"></div>
+      </div>
+      <div class="cat-block" data-emoji="🎮" id="gaming">
+        <div class="cat-label">Category 03</div>
+        <div class="cat-name" style="color: var(--accent2);">Gaming</div>
+        <div class="cat-count">176 articles</div>
+        <div class="cat-bar" style="background: var(--accent2);"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- Trending -->
+    <div class="sidebar-widget reveal">
+      <div class="widget-title">🔥 Trending Now</div>
+      <div class="trending-item">
+        <div class="trend-num">01</div>
+        <div>
+          <div class="trend-title">iPhone 17 Design Leaked: Goodbye Camera Bump?</div>
+          <div class="trend-cat">📱 Mobile</div>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trend-num">02</div>
+        <div>
+          <div class="trend-title">GTA 6 PC Release Date Finally Announced</div>
+          <div class="trend-cat">🎮 Gaming</div>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trend-num">03</div>
+        <div>
+          <div class="trend-title">Lenovo ThinkPad X1 Carbon Gen 13: Silent Killer</div>
+          <div class="trend-cat">💻 Laptops</div>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trend-num">04</div>
+        <div>
+          <div class="trend-title">Android 16 Beta 3 Rolls Out: All New Features</div>
+          <div class="trend-cat">📱 Mobile</div>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trend-num">05</div>
+        <div>
+          <div class="trend-title">Steam Deck 2 Specs: What We Know So Far</div>
+          <div class="trend-cat">🎮 Gaming</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Newsletter -->
+    <div class="sidebar-widget reveal">
+      <div class="widget-title">📬 Newsletter</div>
+      <div class="newsletter-desc">Get the week's best tech stories delivered straight to your inbox every Friday. No spam, ever.</div>
+      <input class="nl-input" type="email" placeholder="your@email.com">
+      <button class="nl-btn" onclick="subscribeNewsletter(this)">Subscribe Free →</button>
+    </div>
+
+    <!-- Hot Deals -->
+    <div class="sidebar-widget reveal">
+      <div class="widget-title">💸 Hot Deals</div>
+      <div class="deal-card">
+        <div class="deal-name">Samsung Galaxy S25</div>
+        <div class="deal-prices">
+          <span class="deal-old">$999</span>
+          <span class="deal-new">$749</span>
+          <span class="deal-save">-25%</span>
+        </div>
+      </div>
+      <div class="deal-card">
+        <div class="deal-name">ASUS ROG Zephyrus G14</div>
+        <div class="deal-prices">
+          <span class="deal-old">$1,599</span>
+          <span class="deal-new">$1,249</span>
+          <span class="deal-save">-22%</span>
+        </div>
+      </div>
+      <div class="deal-card">
+        <div class="deal-name">Sony WH-1000XM6</div>
+        <div class="deal-prices">
+          <span class="deal-old">$399</span>
+          <span class="deal-new">$279</span>
+          <span class="deal-save">-30%</span>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a class="logo" href="#">TECH<span>PULSE</span></a>
+      <div class="footer-desc">Your go-to source for honest, in-depth tech journalism. We test everything so you don't have to. Independent since 2018.</div>
+    </div>
+    <div class="footer-col">
+      <h4>Categories</h4>
+      <a href="#">Mobile Phones</a>
+      <a href="#">Laptops & PCs</a>
+      <a href="#">Gaming</a>
+      <a href="#">Wearables</a>
+      <a href="#">Audio & Video</a>
+    </div>
+    <div class="footer-col">
+      <h4>Editorial</h4>
+      <a href="#">Reviews</a>
+      <a href="#">Best Picks</a>
+      <a href="#">Deals</a>
+      <a href="#">How-To Guides</a>
+      <a href="#">News</a>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="#">About Us</a>
+      <a href="#">Contact</a>
+      <a href="#">Advertise</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 TechPulse Media. All rights reserved.</span>
+    <span>Built for tech enthusiasts everywhere 🌍</span>
+  </div>
+</footer>
+
+<script>
+  // ── SCROLL REVEAL ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ── CATEGORY FILTER ──
+  function filterArticles(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cards = document.querySelectorAll('.article-card');
+    cards.forEach((card, i) => {
+      const matches = cat === 'all' || card.dataset.cat === cat;
+      card.style.display = matches ? '' : 'none';
+      if (matches) {
+        card.style.setProperty('--i', i + 1);
+        card.style.animation = 'none';
+        card.offsetHeight; // reflow
+        card.style.animation = '';
+      }
+    });
+  }
+
+  // ── NEWSLETTER ──
+  function subscribeNewsletter(btn) {
+    const input = btn.previousElementSibling;
+    if (!input.value || !input.value.includes('@')) {
+      input.style.borderColor = 'var(--accent2)';
+      input.placeholder = 'Enter a valid email';
+      setTimeout(() => { input.style.borderColor = ''; input.placeholder = 'your@email.com'; }, 2000);
+      return;
+    }
+    btn.textContent = '✓ You\'re subscribed!';
+    btn.style.background = '#2ecc71';
+    btn.disabled = true;
+    input.value = '';
+  }
+</script>
+    <script src="https://adstudio-sdk-qa-996209450149.s3.ap-southeast-1.amazonaws.com/sdk/adstudio-sdk.umd.js"
         data-position="bottom-right"
         data-bubble-size="60"
         data-init-delay="5000"
@@ -152,21 +1007,5 @@
         data-bucket-url="https://adstudio-sdk-qa-996209450149.s3.ap-southeast-1.amazonaws.com"
         >
     </script>
-
-<script>
-    function getAdstudioAdId() {
-        const cookies = document.cookie.split('; ');
-        const cookie = cookies.find(row => row.startsWith('_adstudio_adid='));
-        return cookie ? decodeURIComponent(cookie.split('=')[1]) : null;
-    }
-
-    function refreshAdId() {
-        const val = getAdstudioAdId();
-        document.getElementById('adid-display').textContent = val || '—';
-    }
-
-    refreshAdId();
-</script>
-
 </body>
 </html>
